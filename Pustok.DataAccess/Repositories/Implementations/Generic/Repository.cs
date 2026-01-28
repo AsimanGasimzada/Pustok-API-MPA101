@@ -35,9 +35,15 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity
         _context.Set<T>().Remove(entity);
     }
 
-    public IQueryable<T> GetAll() //(SELECT * FROM Products ).Include(x=>x.Category).OrderBy(x=>x.Id).GroupBy(x=>x.Id)
+    public IQueryable<T> GetAll(bool ignoreQueryFilter = false) //(SELECT * FROM Products ).Include(x=>x.Category).OrderBy(x=>x.Id).GroupBy(x=>x.Id)
     {
-        return _context.Set<T>();
+        var query = _context.Set<T>().AsQueryable();
+
+        if (ignoreQueryFilter)
+            query = query.IgnoreQueryFilters();
+
+
+        return query;
     }
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> expression)

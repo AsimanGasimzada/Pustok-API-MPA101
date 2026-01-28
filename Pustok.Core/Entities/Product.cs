@@ -2,7 +2,7 @@
 
 namespace Pustok.Core.Entities;
 
-public class Product : BaseEntity
+public class Product : BaseAuditableEntity
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

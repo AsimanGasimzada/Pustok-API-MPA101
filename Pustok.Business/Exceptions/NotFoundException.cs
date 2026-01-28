@@ -1,5 +1,9 @@
-﻿namespace Pustok.Business.Exceptions;
+﻿using Pustok.Business.Abstractions;
 
-public class NotFoundException(string message = "Object is not found") : Exception(message)
+namespace Pustok.Business.Exceptions;
+
+public class NotFoundException(string message = "Object is not found") : Exception(message), IBaseException
 {
+    public int StatusCode { get; set; } = 404;
+
 }

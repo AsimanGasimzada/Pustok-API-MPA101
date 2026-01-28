@@ -1,5 +1,4 @@
-﻿using Pustok.Core.Entities;
-using Pustok.DataAccess.Contexts;
+﻿using Pustok.DataAccess.Contexts;
 using Pustok.DataAccess.Repositories.Abstractions;
 using Pustok.DataAccess.Repositories.Implementations.Generic;
 

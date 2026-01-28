@@ -9,7 +9,7 @@ namespace Pustok.Business.Services.Implementations;
 
 internal class CategoryService(ICategoryRepository _repository, IMapper _mapper) : ICategoryService
 {
-    public async Task CreateAsync(CategoryCreateDto dto)
+    public async Task<ResultDto> CreateAsync(CategoryCreateDto dto)
     {
 
         var isExistCategory = await _repository.AnyAsync(x => x.Name.ToLower() == dto.Name.ToLower());
@@ -22,9 +22,15 @@ internal class CategoryService(ICategoryRepository _repository, IMapper _mapper)
 
         await _repository.AddAsync(category);
         await _repository.SaveChangesAsync();
+
+        return new ResultDto
+        {
+            IsSucced = true,
+            Message = "Category created successfully"
+        };
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<ResultDto> DeleteAsync(Guid id)
     {
         var category = await _repository.GetByIdAsync(id);
 
@@ -33,18 +39,24 @@ internal class CategoryService(ICategoryRepository _repository, IMapper _mapper)
 
         _repository.Delete(category);
         await _repository.SaveChangesAsync();
+
+        return new ResultDto
+        {
+            IsSucced = true,
+            Message = "Category deleted successfully"
+        };
     }
 
-    public async Task<List<CategoryGetDto>> GetAllAsync()
+    public async Task<ResultDto<List<CategoryGetDto>>> GetAllAsync()
     {
         var categories = await _repository.GetAll().Include(x => x.Products).ToListAsync();
 
         var dtos = _mapper.Map<List<CategoryGetDto>>(categories);
 
-        return dtos;
+        return new() { Data = dtos };
     }
 
-    public async Task<CategoryGetDto> GetByIdAsync(Guid id)
+    public async Task<ResultDto<CategoryGetDto>> GetByIdAsync(Guid id)
     {
         var category = await _repository.GetByIdAsync(id);
 
@@ -53,10 +65,10 @@ internal class CategoryService(ICategoryRepository _repository, IMapper _mapper)
 
         var dto = _mapper.Map<CategoryGetDto>(category);
 
-        return dto;
+        return new() { Data = dto };
     }
 
-    public async Task UpdateAsync(CategoryUpdateDto dto)
+    public async Task<ResultDto> UpdateAsync(CategoryUpdateDto dto)
     {
         var category = await _repository.GetByIdAsync(dto.Id);
 
@@ -72,5 +84,11 @@ internal class CategoryService(ICategoryRepository _repository, IMapper _mapper)
 
         _repository.Update(category);
         await _repository.SaveChangesAsync();
+
+        return new ResultDto
+        {
+            IsSucced = true,
+            Message = "Category updated successfully"
+        };
     }
 }

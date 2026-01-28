@@ -23,7 +23,7 @@ internal class ProductService : IProductService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task CreateAsync(ProductCreateDto dto)
+    public async Task<ResultDto> CreateAsync(ProductCreateDto dto)
     {
         var isExistCategory = await _categoryRepository.AnyAsync(x => x.Id == dto.CategoryId);
 
@@ -39,9 +39,12 @@ internal class ProductService : IProductService
 
         await _repository.AddAsync(product);
         await _repository.SaveChangesAsync();
+
+
+        return new ResultDto();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<ResultDto> DeleteAsync(Guid id)
     {
         var product = await _repository.GetByIdAsync(id);
 
@@ -53,18 +56,24 @@ internal class ProductService : IProductService
 
         _repository.Delete(product);
         await _repository.SaveChangesAsync();
+
+        return new();
     }
 
-    public async Task<List<ProductGetDto>> GetAllAsync()
+    public async Task<ResultDto<List<ProductGetDto>>> GetAllAsync()
     {
         var products = await _repository.GetAll().Include(x => x.Category).ToListAsync();
 
         var dtos = _mapper.Map<List<ProductGetDto>>(products);
 
-        return dtos;
+        return new()
+        {
+            Data = dtos
+        };
+
     }
 
-    public async Task<ProductGetDto?> GetByIdAsync(Guid id)
+    public async Task<ResultDto<ProductGetDto>> GetByIdAsync(Guid id)
     {
         var product = await _repository.GetByIdAsync(id);
 
@@ -73,10 +82,10 @@ internal class ProductService : IProductService
 
         var dto = _mapper.Map<ProductGetDto>(product);
 
-        return dto;
+        return new() { Data = dto, Message = "Get By id is Successfuly" };
     }
 
-    public async Task UpdateAsync(ProductUpdateDto dto)
+    public async Task<ResultDto> UpdateAsync(ProductUpdateDto dto)
     {
 
         var isExistCategory = await _categoryRepository.AnyAsync(x => x.Id == dto.CategoryId);
@@ -103,5 +112,7 @@ internal class ProductService : IProductService
 
         _repository.Update(existItem);
         await _repository.SaveChangesAsync();
+
+        return new("Update is successfully");
     }
 }

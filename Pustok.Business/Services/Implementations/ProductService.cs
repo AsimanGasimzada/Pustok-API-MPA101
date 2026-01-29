@@ -115,4 +115,21 @@ internal class ProductService : IProductService
 
         return new("Update is successfully");
     }
+
+
+
+    //public async Task CreateOrder()
+    //{
+    //    //Order order=new(){   StatusId=SeedData.PendingStatus.Id}
+
+    //    //var pendingStatus=_Context.Statutes.FirstOrDefault(x=>x.Name=="Pending");
+    //}
+
+    //public async Task DoneOrder()
+    //{ //existOrder.StatusId=SeedData.DoneStatus.Id  
+
+
+    //}
+
+
 }

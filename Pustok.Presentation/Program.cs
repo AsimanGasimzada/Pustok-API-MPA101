@@ -2,18 +2,23 @@
 using Pustok.Business.ServiceRegistrations;
 using Pustok.DataAccess.ServiceRegistrations;
 using Pustok.Presentation.Middlewares;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Pustok.DataAccess.Abstractions;
 
 namespace Pustok.Presentation;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
 
         builder.Services.AddControllers();
+
+
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
@@ -41,14 +46,19 @@ public class Program
 
         var app = builder.Build();
 
+
+        var scope = app.Services.CreateScope();
+        var initalizer = scope.ServiceProvider.GetRequiredService<IContextInitalizer>();
+        await initalizer.InitDatabaseAsync();
+
+
         app.UseMiddleware<GlobalExceptionHandler>();
 
         app.UseCors("MyPolicy");
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger(); // Enables middleware to serve generated Swagger as a JSON endpoint
-            app.UseSwaggerUI(); // Enables middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
@@ -58,6 +68,6 @@ public class Program
 
         app.MapControllers();
 
-        app.Run();
+        await app.RunAsync();
     }
 }

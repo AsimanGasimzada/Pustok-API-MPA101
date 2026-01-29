@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Pustok.Core.Entities;
 using Pustok.Core.Entities.Common;
+using Pustok.DataAccess.DataInitalizers;
 using Pustok.DataAccess.Interceptors;
 
 namespace Pustok.DataAccess.Contexts;
 
-internal class AppDbContext(BaseAuditableInterceptor _interceptor, DbContextOptions options) : DbContext(options)
+internal class AppDbContext(BaseAuditableInterceptor _interceptor, DbContextOptions options) : IdentityDbContext<AppUser, AppRole, string>(options)
 {
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -13,6 +16,9 @@ internal class AppDbContext(BaseAuditableInterceptor _interceptor, DbContextOpti
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted);
+
+        modelBuilder.AddSeedData();
+
         base.OnModelCreating(modelBuilder);
     }
 
@@ -61,5 +67,6 @@ internal class AppDbContext(BaseAuditableInterceptor _interceptor, DbContextOpti
     //tranfered to AuditableEntitySaveChangesInterceptor
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Status> Statuses { get; set; }
 
 }

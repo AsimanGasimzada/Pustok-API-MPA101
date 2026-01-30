@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pustok.Business.Dtos;
 using Pustok.Business.Services.Abstractions;
 
@@ -6,6 +8,8 @@ namespace Pustok.Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "Member")]
 public class ProductsController(IProductService _service) : ControllerBase
 {
     [HttpGet]

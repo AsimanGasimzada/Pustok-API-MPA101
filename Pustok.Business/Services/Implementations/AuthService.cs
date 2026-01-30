@@ -5,23 +5,65 @@ using Pustok.Business.Exceptions;
 using Pustok.Business.Services.Abstractions;
 using Pustok.Core.Entities;
 using Pustok.Core.Enums;
+using System.Security.Claims;
 
 namespace Pustok.Business.Services.Implementations;
 
-internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper) : IAuthService
+internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, IJWTService _jwtService) : IAuthService
 {
+    public async Task<ResultDto<AccessTokenDto>> LoginAsync(LoginDto dto)
+    {
+
+        var user = await _userManager.FindByNameAsync(dto.EmailOrUsername);
+
+
+        if (user is null)
+        {
+            user = await _userManager.FindByEmailAsync(dto.EmailOrUsername);
+
+            if (user is null)
+                throw new LoginException();
+        }
+
+        var isTruePassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+
+
+        if (!isTruePassword)
+            throw new LoginException();
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+
+        List<Claim> claims = new()
+        {
+            new Claim("Username",user.UserName!),
+            new Claim("Email",user.Email!),
+            new Claim("Fullname",user.Fullname!),
+            new Claim("Role",roles.FirstOrDefault() ?? "undefiend"),
+        };
+
+        var tokenResult = _jwtService.CreateAccessToken(claims);
+
+
+        return new(tokenResult);
+        //{
+        //    Data=tokenResult
+        //};
+
+    }
+
     public async Task<ResultDto> RegisterAsync(RegisterDto dto)
     {
         var isExistEmail = await _userManager.Users.AnyAsync(x => x.Email!.ToLower() == dto.Email.ToLower());
 
 
-        //if (isExistEmail)
-        //    throw new AlreadyExistException("This email is already exist");
+        if (isExistEmail)
+            throw new AlreadyExistException("This email is already exist");
 
-        //var isExistUserName = await _userManager.Users.AnyAsync(x => x.UserName!.ToLower() == dto.UserName.ToLower());
+        var isExistUserName = await _userManager.Users.AnyAsync(x => x.UserName!.ToLower() == dto.UserName.ToLower());
 
-        //if (isExistUserName)
-        //    throw new AlreadyExistException("This username is already exist");
+        if (isExistUserName)
+            throw new AlreadyExistException("This username is already exist");
 
         var appUser = _mapper.Map<AppUser>(dto);
 

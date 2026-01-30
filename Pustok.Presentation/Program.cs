@@ -36,8 +36,8 @@ public class Program
 
 
         //builder.Services.AddScoped<IProductService, ProductService>();
-        builder.Services.AddBusinessServices() //=>builder.Services.AddDataAccessServices(builder.Configuration);
-            .AddDataAccessServices(builder.Configuration);
+        builder.Services.AddDataAccessServices(builder.Configuration);
+        builder.Services.AddBusinessServices(builder.Configuration);//=>builder.Services.AddDataAccessServices(builder.Configuration);
 
         //builder.Services.AddDataAccessServices(builder.Configuration);
         //builder.Services.AddBusinessServices();
@@ -52,7 +52,9 @@ public class Program
         await initalizer.InitDatabaseAsync();
 
 
-        app.UseMiddleware<GlobalExceptionHandler>();
+
+        if (!app.Environment.IsDevelopment())
+            app.UseMiddleware<GlobalExceptionHandler>();
 
         app.UseCors("MyPolicy");
         if (app.Environment.IsDevelopment())
@@ -63,6 +65,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
 

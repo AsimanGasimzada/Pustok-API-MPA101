@@ -41,4 +41,13 @@ public class ResultDto
 public class ResultDto<T> : ResultDto
 {
     public T? Data { get; set; }
+
+    public ResultDto(T data) : base()
+    {
+        Data = data;
+    }
+
+    public ResultDto() : base()
+    {
+    }
 }

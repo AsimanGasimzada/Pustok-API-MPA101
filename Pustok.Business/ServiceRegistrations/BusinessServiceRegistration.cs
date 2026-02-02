@@ -25,7 +25,7 @@ public static class BusinessServiceRegistration
 
         AddServices(services);
 
-        services.AddAutoMapper(typeof(BusinessServiceRegistration).Assembly);
+        services.AddAutoMapper(_ => { }, typeof(BusinessServiceRegistration).Assembly);
 
 
 

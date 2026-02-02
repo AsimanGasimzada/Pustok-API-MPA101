@@ -75,6 +75,20 @@ internal class CategoryService(ICategoryRepository _repository, IMapper _mapper)
         if (category is null)
             throw new NotFoundException();
 
+        //{
+        //id:1,
+        //Name:Davud,
+        //Description:"Salam 2"
+        //
+        //}
+
+        //{
+        //id:2,
+        //Name:Nihat,
+        //Description:""
+        //
+        //}
+
         var isExistCategory = await _repository.AnyAsync(x => x.Name.ToLower() == dto.Name.ToLower() && x.Id != dto.Id);
 
         if (isExistCategory)

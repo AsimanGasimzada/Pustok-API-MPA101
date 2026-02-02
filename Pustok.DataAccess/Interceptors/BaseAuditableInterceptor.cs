@@ -10,7 +10,6 @@ internal class BaseAuditableInterceptor : SaveChangesInterceptor
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         UpdateAuditableDatas(eventData);
-
         return base.SavingChanges(eventData, result);
     }
 
@@ -25,9 +24,9 @@ internal class BaseAuditableInterceptor : SaveChangesInterceptor
     {
         if (eventData.Context is AppDbContext appDbContext)
         {
-            var entities = appDbContext.ChangeTracker.Entries<BaseAuditableEntity>().ToList();
+            var entries = appDbContext.ChangeTracker.Entries<BaseAuditableEntity>().ToList();
 
-            foreach (var entry in entities)
+            foreach (var entry in entries)
             {
                 switch (entry.State)
                 {

@@ -31,19 +31,7 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
         if (!isTruePassword)
             throw new LoginException();
 
-        var roles = await _userManager.GetRolesAsync(user);
-
-
-        List<Claim> claims = new()
-        {
-            new Claim("Username",user.UserName!),
-            new Claim("Email",user.Email!),
-            new Claim("Fullname",user.Fullname!),
-            new Claim("Role",roles.FirstOrDefault() ?? "undefiend"),
-        };
-
-        var tokenResult = _jwtService.CreateAccessToken(claims);
-
+        AccessTokenDto tokenResult = await _getNewAccessTokenDto(user);
 
         return new(tokenResult);
         //{
@@ -51,6 +39,22 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
         //};
 
     }
+
+    public async Task<ResultDto<AccessTokenDto>> RefreshTokenAsync(string refreshToken)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiredDate > DateTime.UtcNow);
+
+
+        if (user is null)
+            throw new LoginException();
+
+
+        var newToken = await _getNewAccessTokenDto(user);
+
+
+        return new(newToken);
+    }
+
 
     public async Task<ResultDto> RegisterAsync(RegisterDto dto)
     {
@@ -83,4 +87,29 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
         return new();
 
     }
+
+
+
+    private async Task<AccessTokenDto> _getNewAccessTokenDto(AppUser user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+
+
+        List<Claim> claims = new()
+        {
+            new Claim("Username",user.UserName!),
+            new Claim("Email",user.Email!),
+            new Claim("Fullname",user.Fullname!),
+            new Claim("Role",roles.FirstOrDefault() ?? "undefiend"),
+        };
+
+        var tokenResult = _jwtService.CreateAccessToken(claims);
+
+        user.RefreshToken = tokenResult.RefreshToken;
+        user.RefreshTokenExpiredDate = tokenResult.RefreshTokenExpiredDate;
+
+        await _userManager.UpdateAsync(user);
+        return tokenResult;
+    }
+
 }

@@ -1,10 +1,12 @@
 
-using Pustok.Business.ServiceRegistrations;
-using Pustok.DataAccess.ServiceRegistrations;
-using Pustok.Presentation.Middlewares;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
+using Pustok.Business.Dtos;
+using Pustok.Business.ServiceRegistrations;
 using Pustok.DataAccess.Abstractions;
+using Pustok.DataAccess.ServiceRegistrations;
+using Pustok.Presentation.Middlewares;
 
 namespace Pustok.Presentation;
 
@@ -16,7 +18,27 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var errors = context.ModelState
+                    .Where(x => x.Value!.Errors.Count > 0)
+                    .Select(x => new
+                    {
+                        Errors = x.Value!.Errors.Select(e => e.ErrorMessage)
+                    });
+
+                ResultDto response = new ResultDto
+                {
+                    IsSucced = false,
+                    Message = string.Join(", ", errors.SelectMany(x => x.Errors)),
+                    StatusCode = 400
+                };
+
+                return new BadRequestObjectResult(response);
+            };
+        }); ;
 
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -52,9 +74,9 @@ public class Program
         await initalizer.InitDatabaseAsync();
 
 
+        app.UseMiddleware<GlobalExceptionHandler>();
 
-        if (!app.Environment.IsDevelopment())
-            app.UseMiddleware<GlobalExceptionHandler>();
+        //if (!app.Environment.IsDevelopment())
 
         app.UseCors("MyPolicy");
         if (app.Environment.IsDevelopment())

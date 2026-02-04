@@ -1,0 +1,81 @@
+﻿@model ProductCreateDto
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Create Product</h2>
+
+            <form asp-action="Create" asp-controller="Product" asp-area="Admin" method="post" enctype="multipart/form-data">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Product Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter product description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label">Price</label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="Enter product price" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class="form-control">
+                        <option value="">-- Select Category --</option>
+                        @* Categories will be populated from API call *@
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Image" class="form-label">Product Image</label>
+                    <input asp-for="Image" type="file" class="form-control" accept="image/*" />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Create Product</button>
+                    <a asp-action="Index" asp-controller="Product" asp-area="Admin" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Load categories from API
+        document.addEventListener('DOMContentLoaded', function () {
+            loadCategories();
+        });
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('https://localhost:44385/api/Categories');
+                if (!response.ok) return;
+
+                const result = await response.json();
+                const select = document.querySelector('[name="CategoryId"]');
+
+                if (result.data && Array.isArray(result.data)) {
+                    result.data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+    </script>
+}

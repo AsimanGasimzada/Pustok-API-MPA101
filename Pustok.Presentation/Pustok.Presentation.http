@@ -1,6 +1,11 @@
 @Pustok.Presentation_HostAddress = http://localhost:5117
+@access_token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJVc2VybmFtZSI6InNleWlkYWtpZiIsIkVtYWlsIjoic2V5aWRAZ21haWwuY29tIiwiRnVsbG5hbWUiOiJTZXlpZCBMZW5rZXJhbnNraSIsIlJvbGUiOiJNZW1iZXIiLCJuYmYiOjE3NzAxODg3MTQsImV4cCI6MTc3MDE5MjMxNCwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0In0.MuQDnXFKD1qqS6VKCascomlRGa_9RytL3zxDK3RzPITgK9IPI4n-kzmqIcbgfsfEkd8Cbx8q5udxxumckhcgTQ
 
 GET {{Pustok.Presentation_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET https://localhost:44385/api/Products
+Accept: application/json
+Authorization:  {{access_token}}

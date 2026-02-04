@@ -1,0 +1,36 @@
+﻿@* @model CategoryCreateVM
+
+<div class="container">
+
+    <div class="row">
+
+
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="CategoryLanguages[0].Name"></label>
+                <input asp-for="CategoryLanguages[0].Name" class="form-control" placeholder="azerbaycanca ad">
+                <input asp-for="CategoryLanguages[0].LanguageCode" value="az" type="hidden" />
+                <span class="text-danger" asp-validation-for="CategoryLanguages[0].Name"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryLanguages[1].Name"></label>
+                <input asp-for="CategoryLanguages[1].Name" class="form-control" placeholder="ingilisce ad">
+                <input asp-for="CategoryLanguages[1].LanguageCode" value="en" type="hidden" />
+                <span class="text-danger" asp-validation-for="CategoryLanguages[1].Name"></span>
+
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryLanguages[2].Name"></label>
+                <input asp-for="CategoryLanguages[2].Name" class="form-control" placeholder="rusca ad">
+                <input asp-for="CategoryLanguages[2].LanguageCode" value="ru" type="hidden" />
+                <span class="text-danger" asp-validation-for="CategoryLanguages[2].Name"></span>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+
+    </div>
+
+</div> *@

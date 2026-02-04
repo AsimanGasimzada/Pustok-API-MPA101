@@ -39,7 +39,6 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
         //};
 
     }
-
     public async Task<ResultDto<AccessTokenDto>> RefreshTokenAsync(string refreshToken)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.RefreshTokenExpiredDate > DateTime.UtcNow);
@@ -54,8 +53,6 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
 
         return new(newToken);
     }
-
-
     public async Task<ResultDto> RegisterAsync(RegisterDto dto)
     {
         var isExistEmail = await _userManager.Users.AnyAsync(x => x.Email!.ToLower() == dto.Email.ToLower());
@@ -87,9 +84,6 @@ internal class AuthService(UserManager<AppUser> _userManager, IMapper _mapper, I
         return new();
 
     }
-
-
-
     private async Task<AccessTokenDto> _getNewAccessTokenDto(AppUser user)
     {
         var roles = await _userManager.GetRolesAsync(user);

@@ -2,5 +2,6 @@
   <Project Path="Pustok.Business/Pustok.Business.csproj" Id="d746cfbf-4ad6-4846-956f-440fc4b9095c" />
   <Project Path="Pustok.Core/Pustok.Core.csproj" />
   <Project Path="Pustok.DataAccess/Pustok.DataAccess.csproj" />
+  <Project Path="Pustok.MVC/Pustok.MVC.csproj" Id="a3580a7a-f5e9-4a78-89be-3db9cf7d5683" />
   <Project Path="Pustok.Presentation/Pustok.Presentation.csproj" Id="3478e552-9562-497c-b723-97c18ee911af" />
 </Solution>
